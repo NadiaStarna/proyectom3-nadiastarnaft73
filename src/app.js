@@ -31,9 +31,7 @@ function renderHome() {
         </div>
       </div>
 
-      <a href="/chat" data-link>
-        <button class="btn-primary">Ir al chat →</button>
-      </a>
+      <button class="btn-primary" id="btn-ir-chat">Ir al chat →</button>
     </div>
   `;
 
@@ -42,6 +40,11 @@ function renderHome() {
       history.pushState({}, "", "/chat");
       renderChat(card.dataset.char);
     });
+  });
+
+  document.querySelector("#btn-ir-chat").addEventListener("click", () => {
+    history.pushState({}, "", "/chat");
+    renderChat();
   });
 }
 
@@ -100,9 +103,10 @@ function router() {
 }
 
 document.addEventListener("click", (e) => {
-  if (e.target.matches("[data-link]")) {
+  const link = e.target.closest("[data-link]");
+  if (link) {
     e.preventDefault();
-    history.pushState({}, "", e.target.href);
+    history.pushState({}, "", link.href);
     router();
   }
 });

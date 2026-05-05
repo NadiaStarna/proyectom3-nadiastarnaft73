@@ -64,8 +64,8 @@ nav a:hover {
 
 .character-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
   width: 100%;
 }
 
@@ -73,13 +73,13 @@ nav a:hover {
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  padding: 1.2rem;
+  padding: 0.6rem 0.3rem;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.2rem;
   text-align: center;
 }
 
@@ -89,16 +89,16 @@ nav a:hover {
 }
 
 .character-card .emoji {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
 }
 
 .character-card h3 {
-  font-size: 1rem;
+  font-size: 0.75rem;
   color: #1a1a2e;
 }
 
 .character-card p {
-  font-size: 0.8rem;
+  font-size: 0.65rem;
   color: #777;
 }
 
@@ -162,20 +162,22 @@ nav a:hover {
 }
 
 #character-selector {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
 }
 
 #character-selector button {
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 0.3rem;
   border-radius: 20px;
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   transition: all 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #character-selector button:hover,
@@ -189,8 +191,8 @@ nav a:hover {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  min-height: 300px;
-  max-height: 400px;
+  min-height: 200px;
+  max-height: 280px;
   overflow-y: auto;
   background: white;
   border: 1px solid #e0e0e0;
@@ -273,8 +275,29 @@ nav a:hover {
     font-size: 2rem;
   }
 
+  .character-card {
+    padding: 1rem 0.6rem;
+  }
+
+  .character-card .emoji {
+    font-size: 2rem;
+  }
+
+  .character-card h3 {
+    font-size: 0.9rem;
+  }
+
+  .character-card p {
+    font-size: 0.75rem;
+  }
+
+  #character-selector button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+
   #chat-box {
-    max-height: 450px;
+    max-height: 400px;
   }
 }
 
@@ -285,8 +308,20 @@ nav a:hover {
     padding: 2.5rem 2rem;
   }
 
-  .character-grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+  .character-card {
+    padding: 1.2rem;
+  }
+
+  .character-card .emoji {
+    font-size: 2.5rem;
+  }
+
+  .character-card h3 {
+    font-size: 1rem;
+  }
+
+  .character-card p {
+    font-size: 0.8rem;
   }
 
   #chat-box {
