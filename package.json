@@ -1,0 +1,13 @@
+{
+  "name": "proyectom3-nadiastarnaft73",
+  "version": "1.0.0",
+  "description": "Chat con personajes usando Gemini AI",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": [],
+  "author": "Nadia Starnaft",
+  "license": "ISC",
+  "type": "module"
+}
