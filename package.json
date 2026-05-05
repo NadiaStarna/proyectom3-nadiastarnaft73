@@ -4,10 +4,13 @@
   "description": "Chat con personajes usando Gemini AI",
   "scripts": {
     "dev": "npx serve .",
-    "start": "npx serve ."
+    "test": "vitest"
   },
   "keywords": [],
-  "author": "Nadia Starnaft",
+  "author": "Nadia Starna",
   "license": "ISC",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
 }
