@@ -7,7 +7,6 @@ export default async function handler(req, res) {
 
   const { messages, systemPrompt } = req.body;
 
-  // Mejor validación (evita falsos errores)
   if (!Array.isArray(messages) || messages.length === 0 || !systemPrompt) {
     return res.status(400).json({
       error: "Faltan datos",
@@ -22,10 +21,10 @@ export default async function handler(req, res) {
     });
   }
 
+  // 🔥 modelo más estable
   const url =
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
-  // 🔧 FIX IMPORTANTE: evitar mensajes vacíos o undefined
   const formattedMessages = messages
     .filter((m) => m?.content)
     .map((m) => ({
@@ -51,25 +50,24 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // 🔴 ERROR REAL DE GEMINI (lo devolvemos bien)
     if (!response.ok) {
       console.error("Gemini error:", data);
 
       return res.status(response.status).json({
-        error:
-          data?.error?.message || "Error en la API de Gemini",
+        error: data?.error?.message || "Error en la API de Gemini",
+        debug: data,
       });
     }
 
     const reply =
       data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-    // 🔧 FIX: si no hay respuesta, mostrar error real
     if (!reply) {
-      console.error("Respuesta vacía Gemini:", data);
+      console.error("Respuesta vacía de Gemini:", data);
 
       return res.status(500).json({
         error: "Gemini no devolvió texto",
+        debug: data,
       });
     }
 
