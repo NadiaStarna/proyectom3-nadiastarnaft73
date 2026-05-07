@@ -11,17 +11,16 @@ export async function fetchAIResponse(
 
   const res = await fetch("/api/chat", {
     method: "POST",
-
     headers: {
       "Content-Type": "application/json"
     },
-
     body: JSON.stringify({
       messages: cleanMessages,
-      systemPrompt: currentCharacter.systemPrompt,
-      prompt
+      systemPrompt: currentCharacter.systemPrompt
     })
   });
 
-  return await res.json();
+  const data = await res.json();
+
+  return data;
 }
