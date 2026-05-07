@@ -1,155 +1,87 @@
-const characters = {
-  hermione: {
-    name: "Hermione Granger",
-    emoji: "🧙‍♀️",
-    systemPrompt: `Sos Hermione Granger de Harry Potter. Respondés de forma inteligente, 
-    precisa y un poco condescendiente. Citás libros y reglas. Corregís errores de los demás. 
-    Tus respuestas son cortas, como en un chat.`
-  },
-  dobby: {
-    name: "Dobby",
-    emoji: "🧦",
-    systemPrompt: `Sos Dobby, el elfo doméstico de Harry Potter. Siempre hablás en tercera 
-    persona ("Dobby cree que...", "Dobby está feliz de..."). Sos muy dramático y leal. 
-    Tus respuestas son cortas, como en un chat.`
-  },
-  homer: {
-    name: "Homer Simpson",
-    emoji: "🍩",
-    systemPrompt: `Sos Homer Simpson. Sos torpe, gracioso y pensás en comida todo el tiempo, 
-    especialmente donas y cerveza. Decís "Mmm..." seguido de algo rico. Usás frases como 
-    "D'oh!" cuando te equivocás. Tus respuestas son cortas, como en un chat.`
-  },
-  lisa: {
-    name: "Lisa Simpson",
-    emoji: "🎷",
-    systemPrompt: `Sos Lisa Simpson. Sos inteligente, reflexiva y comprometida con causas sociales. 
-    Tocás saxofón y luchás por la justicia. Tenés una opinión fundamentada sobre todo. 
-    Tus respuestas son cortas, como en un chat.`
-  }
-};
-
-let currentCharacter = characters.hermione;
-let messages = [];
-let isLoading = false;
-
-export function renderChat(charKey) {
-  if (charKey && characters[charKey]) {
-    currentCharacter = characters[charKey];
-    messages = [];
-  }
-
-  const app = document.querySelector("#app");
-
-  app.innerHTML = `
-    <div class="chat-container">
-      <h2>${currentCharacter.emoji} Chateando con ${currentCharacter.name}</h2>
-
-      <div id="character-selector">
-        ${Object.entries(characters).map(([key, char]) => `
-          <button data-c="${key}" class="${key === getCharKey() ? 'active' : ''}">
-            ${char.emoji} ${char.name.split(" ")[0]}
-          </button>
-        `).join("")}
-      </div>
-
-      <div id="chat-box"></div>
-
-      <div class="input-area">
-        <input id="input" placeholder="Escribí tu mensaje..." autocomplete="off" />
-        <button id="send">Enviar</button>
-      </div>
-    </div>
-  `;
-
-  document.querySelectorAll("[data-c]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      currentCharacter = characters[btn.dataset.c];
-      messages = [];
-      renderChat();
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed",
     });
-  });
+  }
 
-  document.querySelector("#send").addEventListener("click", handleSend);
+  const { messages, systemPrompt } = req.body;
 
-  document.querySelector("#input").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleSend();
-  });
+  // Mejor validación (evita falsos errores)
+  if (!Array.isArray(messages) || messages.length === 0 || !systemPrompt) {
+    return res.status(400).json({
+      error: "Faltan datos",
+    });
+  }
 
-  renderMessages();
-}
+  const apiKey = process.env.GEMINI_API_KEY;
 
-function getCharKey() {
-  return Object.keys(characters).find(k => characters[k] === currentCharacter) || "hermione";
-}
+  if (!apiKey) {
+    return res.status(500).json({
+      error: "API key no configurada",
+    });
+  }
 
-function renderMessages() {
-  const box = document.querySelector("#chat-box");
-  if (!box) return;
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-  box.innerHTML = "";
+  // 🔧 FIX IMPORTANTE: evitar mensajes vacíos o undefined
+  const formattedMessages = messages
+    .filter((m) => m?.content)
+    .map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
 
-  messages.forEach(m => {
-    const div = document.createElement("div");
-    div.classList.add("message", m.role === "user" ? "user" : "bot");
-    div.textContent = m.content;
-    box.appendChild(div);
-  });
-
-  // Scroll automático al último mensaje
-  box.scrollTop = box.scrollHeight;
-}
-
-function handleSend() {
-  const input = document.querySelector("#input");
-  if (!input || !input.value.trim() || isLoading) return;
-
-  messages.push({ role: "user", content: input.value.trim() });
-  input.value = "";
-  renderMessages();
-  simulateResponse();
-}
-
-async function realFetch(cleanMessages) {
-  const res = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      messages: cleanMessages,
-      systemPrompt: currentCharacter.systemPrompt
-    })
-  });
-  return await res.json();
-}
-
-async function simulateResponse() {
-  isLoading = true;
-
-  const sendBtn = document.querySelector("#send");
-  const inputEl = document.querySelector("#input");
-  if (sendBtn) sendBtn.disabled = true;
-  if (inputEl) inputEl.disabled = true;
-
-  messages.push({ role: "model", content: "Escribiendo...", loading: true });
-  renderMessages();
+  const body = {
+    system_instruction: {
+      parts: [{ text: systemPrompt }],
+    },
+    contents: formattedMessages,
+  };
 
   try {
-    const clean = messages.filter(m => !m.loading);
-    const data = await realFetch(clean);
-
-    messages.pop();
-    messages.push({
-      role: "model",
-      content: data.reply || "No pude responder 😢"
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
     });
 
-  } catch (err) {
-    messages.pop();
-    messages.push({ role: "model", content: "Error al conectar 😢" });
-  }
+    const data = await response.json();
 
-  isLoading = false;
-  if (sendBtn) sendBtn.disabled = false;
-  if (inputEl) inputEl.disabled = false;
-  renderMessages();
+    // 🔴 ERROR REAL DE GEMINI (lo devolvemos bien)
+    if (!response.ok) {
+      console.error("Gemini error:", data);
+
+      return res.status(response.status).json({
+        error:
+          data?.error?.message || "Error en la API de Gemini",
+      });
+    }
+
+    const reply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    // 🔧 FIX: si no hay respuesta, mostrar error real
+    if (!reply) {
+      console.error("Respuesta vacía Gemini:", data);
+
+      return res.status(500).json({
+        error: "Gemini no devolvió texto",
+      });
+    }
+
+    return res.status(200).json({
+      reply,
+    });
+
+  } catch (error) {
+    console.error("Error conexión Gemini:", error);
+
+    return res.status(500).json({
+      error: "Error al conectar con Gemini",
+    });
+  }
 }

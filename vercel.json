@@ -1,6 +1,8 @@
 {
-  "outputDirectory": "src",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/src/index.html" }
+    {
+      "source": "/((?!api).*)",
+      "destination": "/src/index.html"
+    }
   ]
 }
