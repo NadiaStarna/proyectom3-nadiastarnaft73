@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "echo local-dev",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "build": "echo ok"
   },
   "keywords": [],
   "author": "Nadia Starna",
