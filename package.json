@@ -2,7 +2,6 @@
   "name": "proyectom3-nadiastarnaft73",
   "version": "1.0.0",
   "description": "Chat con personajes usando Gemini AI",
-  "type": "module",
   "scripts": {
     "dev": "echo local-dev",
     "test": "vitest",

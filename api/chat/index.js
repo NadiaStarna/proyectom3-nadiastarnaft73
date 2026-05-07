@@ -1,11 +1,9 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  let body = req.body;
-
-  const { messages, systemPrompt } = body;
+  const { messages, systemPrompt } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0 || !systemPrompt) {
     return res.status(400).json({ error: "Faltan datos" });
@@ -65,4 +63,4 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({ error: "Error al conectar con Gemini" });
   }
-}
+};
