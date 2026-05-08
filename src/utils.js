@@ -9,3 +9,18 @@ export function isValidMessage(content) {
 export function getCharacterByKey(characters, key) {
   return characters[key] || null;
 }
+
+export function parseGeminiResponse(data) {
+  return (
+    data?.candidates?.[0]?.content?.parts?.[0]?.text || null
+  );
+}
+
+export function buildPrompt(systemPrompt, messages) {
+  const history = messages
+    .filter((m) => !m.loading)
+    .map((m) => `${m.role}: ${m.content}`)
+    .join("\n");
+
+  return `${systemPrompt}\n\n${history}`;
+}
