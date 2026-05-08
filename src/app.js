@@ -1,5 +1,4 @@
 import { renderChat } from "./chat.js";
-
 import { renderHome } from "./views/home.js";
 import { renderAbout } from "./views/about.js";
 

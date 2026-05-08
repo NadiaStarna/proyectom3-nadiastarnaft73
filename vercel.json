@@ -1,13 +1,9 @@
 {
-  "version": 2,
+  "buildCommand": "npm install",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/:path*"
-    },
-    {
       "source": "/((?!api).*)",
-      "destination": "/index.html"
+      "destination": "/src/index.html"
     }
   ]
 }
