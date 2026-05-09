@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   formatMessage,
   parseGeminiResponse,
@@ -92,5 +92,29 @@ describe("buildPrompt", () => {
     ];
     const prompt = buildPrompt("Sos Hermione.", messages);
     expect(prompt).not.toContain("Escribiendo...");
+  });
+});
+
+describe("fetch mock — fetchAIResponse", () => {
+  it("devuelve reply cuando el mock está activo", async () => {
+    const { fetchAIResponse } = await import("../src/services/ai.js");
+
+    const character = { name: "Homero Simpson", systemPrompt: "Sos Homero." };
+    const messages = [{ role: "user", content: "Hola", loading: false }];
+
+    const data = await fetchAIResponse(character, messages);
+    expect(data.reply).toBeTruthy();
+    expect(typeof data.reply).toBe("string");
+  });
+
+  it("devuelve reply con contenido para Hermione", async () => {
+    const { fetchAIResponse } = await import("../src/services/ai.js");
+
+    const character = { name: "Hermione Granger", systemPrompt: "Sos Hermione." };
+    const messages = [{ role: "user", content: "Hola", loading: false }];
+
+    const data = await fetchAIResponse(character, messages);
+    expect(data.reply).toBeTruthy();
+    expect(typeof data.reply).toBe("string");
   });
 });
