@@ -50,6 +50,7 @@ function applyTheme() {
   const container = document.querySelector(".chat-container");
   if (!container) return;
   container.className = `chat-container ${currentCharacter.theme}`;
+  document.body.className = currentCharacter.theme;
 }
 
 function saveMessages() {
