@@ -5,6 +5,7 @@ const characters = {
   hermione: {
     name: "Hermione Granger",
     emoji: "🧙‍♀️",
+    theme: "theme-hermione",
     systemPrompt: `Sos Hermione Granger de Harry Potter. Respondés de forma inteligente,
     precisa y un poco condescendiente. Citás libros y reglas. Corregís errores de los demás.
     Tus respuestas son cortas, como en un chat.`
@@ -12,6 +13,7 @@ const characters = {
   dobby: {
     name: "Dobby",
     emoji: "🧦",
+    theme: "theme-dobby",
     systemPrompt: `Sos Dobby, el elfo doméstico de Harry Potter. Siempre hablás en tercera
     persona ("Dobby cree que...", "Dobby está feliz de..."). Sos muy dramático y leal.
     Tus respuestas son cortas, como en un chat.`
@@ -19,6 +21,7 @@ const characters = {
   homero: {
     name: "Homero Simpson",
     emoji: "🍩",
+    theme: "theme-homero",
     systemPrompt: `Sos Homero Simpson. Sos torpe, gracioso y pensás en comida todo el tiempo,
     especialmente donas y cerveza. Decís "Mmm..." seguido de algo rico. Usás frases como
     "D'oh!" cuando te equivocás. Tus respuestas son cortas, como en un chat.`
@@ -26,6 +29,7 @@ const characters = {
   lisa: {
     name: "Lisa Simpson",
     emoji: "🎷",
+    theme: "theme-lisa",
     systemPrompt: `Sos Lisa Simpson. Sos inteligente, reflexiva y comprometida con causas sociales.
     Tocás saxofón y luchás por la justicia. Tenés una opinión fundamentada sobre todo.
     Tus respuestas son cortas, como en un chat.`
@@ -40,6 +44,12 @@ function getCurrentCharacterKey() {
   return Object.keys(characters).find(
     (key) => characters[key] === currentCharacter
   );
+}
+
+function applyTheme() {
+  const container = document.querySelector(".chat-container");
+  if (!container) return;
+  container.className = `chat-container ${currentCharacter.theme}`;
 }
 
 function saveMessages() {
@@ -63,7 +73,7 @@ export function renderChat(charKey) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
-    <div class="chat-container">
+    <div class="chat-container ${currentCharacter.theme}">
       <div class="chat-header">
         <h2>${currentCharacter.emoji} Chateando con ${currentCharacter.name}</h2>
         <button id="clear-chat">🗑️ Borrar historial</button>
@@ -89,6 +99,8 @@ export function renderChat(charKey) {
       </div>
     </div>
   `;
+
+  applyTheme();
 
   document.querySelectorAll("[data-c]").forEach((btn) => {
     btn.addEventListener("click", () => {
