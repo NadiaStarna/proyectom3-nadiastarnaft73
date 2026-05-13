@@ -12,6 +12,7 @@
   "author": "Nadia Starna",
   "license": "ISC",
   "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.9",
     "vercel": "^53.2.0",
     "vitest": "^2.0.0"
   },

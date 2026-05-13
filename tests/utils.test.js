@@ -96,25 +96,36 @@ describe("buildPrompt", () => {
 });
 
 describe("fetch mock — fetchAIResponse", () => {
-  it("devuelve reply cuando el mock está activo", async () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it("devuelve reply cuando fetch responde OK", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ reply: "Mmm... donas." })
+    });
+
     const { fetchAIResponse } = await import("../src/services/ai.js");
 
     const character = { name: "Homero Simpson", systemPrompt: "Sos Homero." };
     const messages = [{ role: "user", content: "Hola", loading: false }];
 
     const data = await fetchAIResponse(character, messages);
-    expect(data.reply).toBeTruthy();
-    expect(typeof data.reply).toBe("string");
+    expect(data.reply).toBe("Mmm... donas.");
   });
 
-  it("devuelve reply con contenido para Hermione", async () => {
+  it("lanza error si fetch responde con error", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ error: "Error del servidor" })
+    });
+
     const { fetchAIResponse } = await import("../src/services/ai.js");
 
-    const character = { name: "Hermione Granger", systemPrompt: "Sos Hermione." };
+    const character = { name: "Homero Simpson", systemPrompt: "Sos Homero." };
     const messages = [{ role: "user", content: "Hola", loading: false }];
 
-    const data = await fetchAIResponse(character, messages);
-    expect(data.reply).toBeTruthy();
-    expect(typeof data.reply).toBe("string");
+    await expect(fetchAIResponse(character, messages)).rejects.toThrow();
   });
 });

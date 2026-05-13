@@ -1,6 +1,6 @@
 .env
 .vercel/
 node_modules
-
+echo "coverage" >> .gitignore
 
 .vercel
