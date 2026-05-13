@@ -12,7 +12,8 @@ const themes = {
     count: 35,
     minSize: 18,
     maxSize: 42,
-    glow: "255, 100, 130"
+    glow: "255, 100, 130",
+    speedMult: 1.8
   },
   "theme-dobby": {
     symbols: ["✦", "◆", "✧", "⬟", "❋"],
@@ -20,7 +21,8 @@ const themes = {
     count: 35,
     minSize: 18,
     maxSize: 42,
-    glow: "80, 200, 120"
+    glow: "80, 200, 120",
+    speedMult: 1
   },
   "theme-homero": {
     symbols: ["🍩", "⭐", "★", "✦", "◉"],
@@ -28,7 +30,8 @@ const themes = {
     count: 30,
     minSize: 20,
     maxSize: 48,
-    glow: "255, 200, 50"
+    glow: "255, 200, 50",
+    speedMult: 1.8
   },
   "theme-lisa": {
     symbols: ["♪", "♫", "♩", "♬", "✦"],
@@ -36,7 +39,8 @@ const themes = {
     count: 35,
     minSize: 18,
     maxSize: 44,
-    glow: "80, 160, 255"
+    glow: "80, 160, 255",
+    speedMult: 1
   },
   default: {
     symbols: ["✦", "✧", "⋆", "★"],
@@ -44,7 +48,8 @@ const themes = {
     count: 30,
     minSize: 18,
     maxSize: 40,
-    glow: "167, 139, 250"
+    glow: "167, 139, 250",
+    speedMult: 1
   }
 };
 
@@ -62,8 +67,8 @@ function createParticle(theme) {
     symbol: config.symbols[Math.floor(Math.random() * config.symbols.length)],
     size: Math.random() * (config.maxSize - config.minSize) + config.minSize,
     opacity: Math.random() * 0.5 + 0.4,
-    speedX: (Math.random() - 0.5) * 0.6,
-    speedY: -(Math.random() * 0.8 + 0.3),
+    speedX: (Math.random() - 0.5) * 0.6 * (config.speedMult || 1),
+    speedY: -(Math.random() * 0.8 + 0.3) * (config.speedMult || 1),
     color,
     glow: config.glow,
     life: 0,
