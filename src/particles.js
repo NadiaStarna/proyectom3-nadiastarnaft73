@@ -7,29 +7,44 @@ let currentTheme = null;
 
 const themes = {
   "theme-hermione": {
-    symbols: ["✦", "✧", "⋆", "★", "✨"],
-    color: "rgba(155, 44, 74,",
-    count: 40
+    symbols: ["✦", "✧", "★", "✨", "⚡"],
+    colors: ["255, 100, 130", "220, 80, 110", "255, 180, 200", "200, 60, 90"],
+    count: 35,
+    minSize: 18,
+    maxSize: 42,
+    glow: "255, 100, 130"
   },
   "theme-dobby": {
-    symbols: ["✦", "◆", "⬟", "✧", "⋆"],
-    color: "rgba(45, 122, 79,",
-    count: 35
+    symbols: ["✦", "◆", "✧", "⬟", "❋"],
+    colors: ["80, 200, 120", "50, 180, 90", "120, 220, 150", "40, 150, 80"],
+    count: 35,
+    minSize: 18,
+    maxSize: 42,
+    glow: "80, 200, 120"
   },
   "theme-homero": {
-    symbols: ["🍩", "⭐", "✦", "◉", "●"],
-    color: "rgba(212, 147, 10,",
-    count: 30
+    symbols: ["🍩", "⭐", "★", "✦", "◉"],
+    colors: ["255, 200, 50", "240, 170, 20", "255, 220, 80", "210, 140, 10"],
+    count: 30,
+    minSize: 20,
+    maxSize: 48,
+    glow: "255, 200, 50"
   },
   "theme-lisa": {
     symbols: ["♪", "♫", "♩", "♬", "✦"],
-    color: "rgba(26, 109, 181,",
-    count: 35
+    colors: ["80, 160, 255", "50, 130, 220", "120, 190, 255", "40, 110, 200"],
+    count: 35,
+    minSize: 18,
+    maxSize: 44,
+    glow: "80, 160, 255"
   },
   default: {
     symbols: ["✦", "✧", "⋆", "★"],
-    color: "rgba(167, 139, 250,",
-    count: 30
+    colors: ["167, 139, 250", "140, 100, 230", "190, 160, 255"],
+    count: 30,
+    minSize: 18,
+    maxSize: 40,
+    glow: "167, 139, 250"
   }
 };
 
@@ -40,22 +55,31 @@ function resize() {
 
 function createParticle(theme) {
   const config = themes[theme] || themes.default;
+  const color = config.colors[Math.floor(Math.random() * config.colors.length)];
   return {
     x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
+    y: Math.random() * canvas.height + canvas.height,
     symbol: config.symbols[Math.floor(Math.random() * config.symbols.length)],
-    size: Math.random() * 14 + 8,
-    opacity: Math.random() * 0.4 + 0.1,
-    speedX: (Math.random() - 0.5) * 0.4,
-    speedY: -Math.random() * 0.5 - 0.1,
-    color: config.color,
-    life: Math.random()
+    size: Math.random() * (config.maxSize - config.minSize) + config.minSize,
+    opacity: Math.random() * 0.5 + 0.4,
+    speedX: (Math.random() - 0.5) * 0.6,
+    speedY: -(Math.random() * 0.8 + 0.3),
+    color,
+    glow: config.glow,
+    life: 0,
+    rotation: Math.random() * Math.PI * 2,
+    rotationSpeed: (Math.random() - 0.5) * 0.02
   };
 }
 
 function initParticles(theme) {
   const config = themes[theme] || themes.default;
-  particles = Array.from({ length: config.count }, () => createParticle(theme));
+  particles = Array.from({ length: config.count }, () => {
+    const p = createParticle(theme);
+    p.y = Math.random() * canvas.height;
+    p.life = Math.random();
+    return p;
+  });
 }
 
 function animate(theme) {
@@ -64,19 +88,30 @@ function animate(theme) {
   particles.forEach((p, i) => {
     p.x += p.speedX;
     p.y += p.speedY;
-    p.life += 0.003;
+    p.life += 0.004;
+    p.rotation += p.rotationSpeed;
 
     const opacity = Math.sin(p.life * Math.PI) * p.opacity;
+    if (opacity <= 0) return;
 
     ctx.save();
-    ctx.globalAlpha = Math.max(0, opacity);
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation);
+    ctx.globalAlpha = opacity;
+
+    ctx.shadowColor = `rgba(${p.glow}, ${opacity})`;
+    ctx.shadowBlur = 20;
+
     ctx.font = `${p.size}px serif`;
-    ctx.fillText(p.symbol, p.x, p.y);
+    ctx.fillStyle = `rgba(${p.color}, ${opacity})`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(p.symbol, 0, 0);
+
     ctx.restore();
 
-    if (p.y < -20 || p.life >= 1) {
+    if (p.y < -50 || p.life >= 1) {
       particles[i] = createParticle(theme);
-      particles[i].y = canvas.height + 20;
     }
   });
 
