@@ -35,7 +35,7 @@ function getMockResponse(character) {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
-const USE_MOCK = true; 
+const USE_MOCK = false;
 
 export async function fetchAIResponse(currentCharacter, cleanMessages) {
   if (USE_MOCK) {
