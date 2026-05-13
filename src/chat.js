@@ -1,5 +1,6 @@
 import { formatMessage, isValidMessage, getCharacterByKey } from "./utils.js";
 import { fetchAIResponse } from "./services/ai.js";
+import { startParticles } from "./particles.js";
 
 const characters = {
   hermione: {
@@ -51,6 +52,7 @@ function applyTheme() {
   if (!container) return;
   container.className = `chat-container ${currentCharacter.theme}`;
   document.body.className = currentCharacter.theme;
+  startParticles(currentCharacter.theme);
 }
 
 function saveMessages() {
@@ -202,7 +204,7 @@ function handleSend() {
   messages[messages.length - 1].timestamp = getTimestamp();
   saveMessages();
   input.value = "";
-  input.focus(); // ← agregá esta línea
+  input.focus();
   renderMessages();
   simulateResponse();
 }
