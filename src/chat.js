@@ -63,6 +63,23 @@ function loadMessages() {
   messages = JSON.parse(localStorage.getItem(key)) || [];
 }
 
+function getTimestamp() {
+  const now = new Date();
+  return now.toLocaleTimeString("es-AR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "✅";
+    setTimeout(() => {
+      btn.textContent = "📋";
+    }, 1500);
+  });
+}
+
 export function renderChat(charKey) {
   if (charKey && getCharacterByKey(characters, charKey)) {
     currentCharacter = characters[charKey];
@@ -136,10 +153,41 @@ function renderMessages() {
   box.innerHTML = "";
 
   messages.forEach((m) => {
+    if (m.loading) {
+      const div = document.createElement("div");
+      div.classList.add("message", "bot", "typing-indicator");
+      div.innerHTML = `<span></span><span></span><span></span>`;
+      box.appendChild(div);
+      return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message-wrapper", m.role === "user" ? "user-wrapper" : "bot-wrapper");
+
     const div = document.createElement("div");
     div.classList.add("message", m.role === "user" ? "user" : "bot");
     div.textContent = m.content;
-    box.appendChild(div);
+
+    const meta = document.createElement("div");
+    meta.classList.add("message-meta");
+
+    const time = document.createElement("span");
+    time.classList.add("timestamp");
+    time.textContent = m.timestamp || getTimestamp();
+    meta.appendChild(time);
+
+    if (m.role === "assistant") {
+      const copyBtn = document.createElement("button");
+      copyBtn.classList.add("copy-btn");
+      copyBtn.textContent = "📋";
+      copyBtn.title = "Copiar respuesta";
+      copyBtn.addEventListener("click", () => copyToClipboard(m.content, copyBtn));
+      meta.appendChild(copyBtn);
+    }
+
+    wrapper.appendChild(div);
+    wrapper.appendChild(meta);
+    box.appendChild(wrapper);
   });
 
   box.scrollTop = box.scrollHeight;
@@ -151,6 +199,7 @@ function handleSend() {
   if (!input || !isValidMessage(input.value) || isLoading) return;
 
   messages.push(formatMessage("user", input.value.trim()));
+  messages[messages.length - 1].timestamp = getTimestamp();
   saveMessages();
   input.value = "";
   renderMessages();
@@ -174,12 +223,17 @@ async function simulateResponse() {
     const data = await fetchAIResponse(currentCharacter, cleanMessages);
 
     messages.pop();
-    messages.push(formatMessage("assistant", data.reply || "No pude responder 😢"));
+
+    const reply = formatMessage("assistant", data.reply || "No pude responder 😢");
+    reply.timestamp = getTimestamp();
+    messages.push(reply);
     saveMessages();
 
   } catch (error) {
     messages.pop();
-    messages.push(formatMessage("assistant", "Error al conectar 😢"));
+    const errMsg = formatMessage("assistant", "Error al conectar 😢");
+    errMsg.timestamp = getTimestamp();
+    messages.push(errMsg);
   }
 
   isLoading = false;
