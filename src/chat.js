@@ -202,6 +202,7 @@ function handleSend() {
   messages[messages.length - 1].timestamp = getTimestamp();
   saveMessages();
   input.value = "";
+  input.focus(); // ← agregá esta línea
   renderMessages();
   simulateResponse();
 }
