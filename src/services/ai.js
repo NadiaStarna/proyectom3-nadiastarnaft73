@@ -35,7 +35,7 @@ function getMockResponse(character) {
   return responses[Math.floor(Math.random() * responses.length)];
 }
 
-const USE_MOCK = true; // ← cambiá a false cuando quieras usar Gemini real
+const USE_MOCK = true; 
 
 export async function fetchAIResponse(currentCharacter, cleanMessages) {
   if (USE_MOCK) {
