@@ -308,7 +308,6 @@ nav a:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== CHAT BOX ===== */
 #chat-box {
   display: flex;
   flex-direction: column;
@@ -337,7 +336,6 @@ nav a:hover {
   border-radius: 4px;
 }
 
-/* ===== WRAPPERS DE MENSAJES ===== */
 .message-wrapper {
   display: flex;
   flex-direction: column;
@@ -354,7 +352,6 @@ nav a:hover {
   align-items: flex-start;
 }
 
-/* ===== MENSAJES ===== */
 .message {
   max-width: 75%;
   padding: 0.7rem 1rem;
@@ -388,7 +385,6 @@ nav a:hover {
   border-bottom-left-radius: 4px;
 }
 
-/* ===== META — TIMESTAMP + COPIAR ===== */
 .message-meta {
   display: flex;
   align-items: center;
@@ -418,7 +414,6 @@ nav a:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* ===== TYPING INDICATOR ===== */
 .typing-indicator {
   display: flex;
   align-items: center;
@@ -454,7 +449,6 @@ nav a:hover {
   }
 }
 
-/* ===== INPUT AREA ===== */
 .input-area {
   display: flex;
   gap: 0.6rem;
@@ -516,7 +510,6 @@ nav a:hover {
   box-shadow: none;
 }
 
-/* ===== VARIABLES DE TEMAS ===== */
 .theme-hermione {
   --theme-primary: #9b2c4a;
   --theme-dark: #7a1f38;
@@ -545,7 +538,6 @@ nav a:hover {
   --theme-muted: rgba(26, 109, 181, 0.4);
 }
 
-/* ===== TABLET ===== */
 @media (min-width: 600px) {
   #app {
     padding: 2rem 1.5rem;
@@ -581,7 +573,6 @@ nav a:hover {
   }
 }
 
-/* ===== DESKTOP ===== */
 @media (min-width: 1024px) {
   #app {
     max-width: 760px;
